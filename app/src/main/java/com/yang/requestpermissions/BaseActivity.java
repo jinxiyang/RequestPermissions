@@ -1,5 +1,6 @@
 package com.yang.requestpermissions;
 
+import android.app.Activity;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.support.annotation.NonNull;
@@ -7,10 +8,6 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 /**
  * Author: 杨进玺
@@ -23,28 +20,27 @@ public class BaseActivity extends AppCompatActivity {
 
     /**
      * 请求权限
-     *
-     * @param permissions
-     * @param requestCode
      */
-    public void requestDangerousPermissions(String[] permissions, int requestCode) {
+    public void requestDangerousPermissions(Activity ac, String[] permissions, int requestCode) {
+        ActivityCompat.requestPermissions(ac, permissions, requestCode);
+    }
+
+    /**
+     * 检查是否已被授权危险权限
+     * @param permissions
+     * @return
+     */
+    public boolean checkDangerousPermissions(Activity ac, String[] permissions) {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
-            handlePermissionResult(requestCode, true);
-            return;
+            return true;
         }
-        List<String> needPermissions = new ArrayList<>();
         for (String permission : permissions) {
             if (ContextCompat.checkSelfPermission(this, permission) != PackageManager.PERMISSION_GRANTED ||
-                    ActivityCompat.shouldShowRequestPermissionRationale(this, permission)) {
-                needPermissions.add(permission);
+                    ActivityCompat.shouldShowRequestPermissionRationale(ac, permission)) {
+                return false;
             }
         }
-        if (needPermissions.size() == 0) {
-            handlePermissionResult(requestCode, true);
-            return;
-        }
-        needPermissions = Arrays.asList(permissions);
-        ActivityCompat.requestPermissions(this, needPermissions.toArray(new String[needPermissions.size()]), requestCode);
+        return true;
     }
 
 
