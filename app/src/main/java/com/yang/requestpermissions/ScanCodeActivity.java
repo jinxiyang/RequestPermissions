@@ -63,7 +63,7 @@ public class ScanCodeActivity extends BaseActivity  implements QRCodeView.Delega
             @Override
             public void onDismiss(DialogInterface dialog) {
                 hasRequestPermission = true;
-                requestDangerousPermissions(cameraPermissions, REQUEST_CODE_CAMERA);
+                requestDangerousPermissions(ScanCodeActivity.this, cameraPermissions, REQUEST_CODE_CAMERA);
             }
         });
         dialog.show(getSupportFragmentManager(), ScanCodeActivity.class.getSimpleName());

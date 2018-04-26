@@ -1,6 +1,7 @@
 package com.yang.requestpermissions;
 
 
+import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -20,9 +21,15 @@ import java.util.List;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class MainFragment extends Fragment {
+public class MainFragment extends BaseFragment {
 
     private Button btnScanCode;
+    private Button btnCall;
+    private String mPhone;
+
+    private String[] callPermission = new String[]{
+            Manifest.permission.CALL_PHONE
+    };
 
     public MainFragment() {
         // Required empty public constructor
@@ -41,6 +48,13 @@ public class MainFragment extends Fragment {
                 showScanCodePage();
             }
         });
+        btnCall = view.findViewById(R.id.btn_call);
+        btnCall.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                attempToCall("10086");
+            }
+        });
         return view;
     }
 
@@ -49,14 +63,31 @@ public class MainFragment extends Fragment {
     }
 
 
-//    private void attempToCall(String phone) {
-//        if (!isIntentExisting(getContext(), Intent.ACTION_DIAL)) {
-//            Toast.makeText(getContext(), "该设备不能打电话", Toast.LENGTH_SHORT).show();
-//            return;
-//        }
-//        mPhone = phone;
-//        requestDangerousPermissions(permissions, AppConstant.RequestCode.WEBVIEW_CALL);
-//    }
+    private void attempToCall(String phone) {
+        if (!isIntentExisting(getContext(), Intent.ACTION_DIAL)) {
+            Toast.makeText(getContext(), "该设备不能打电话", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        mPhone = phone;
+        requestDangerousPermissions(callPermission, 88);
+    }
+
+    @Override
+    public boolean handlePermissionResult(int requestCode, boolean isGranted) {
+        if (requestCode == 88){
+            final String phone = mPhone;
+            getView().post(new Runnable() {
+                @Override
+                public void run() {
+                    call(phone);
+                }
+            });
+            mPhone = null;
+            return true;
+        }
+
+        return super.handlePermissionResult(requestCode, isGranted);
+    }
 
     private void call(String phone) {
         Intent intent = new Intent(Intent.ACTION_DIAL, Uri.parse("tel:" + phone));
