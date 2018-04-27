@@ -7,7 +7,6 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 
 /**
  * Author: 杨进玺
@@ -15,8 +14,6 @@ import android.util.Log;
  */
 
 public class BaseActivity extends AppCompatActivity {
-
-    String TAG = getClass().getSimpleName();
 
     /**
      * 请求权限
@@ -56,18 +53,6 @@ public class BaseActivity extends AppCompatActivity {
         if (!finish){
             super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         }
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        Log.i(TAG, "onResume: ");
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        Log.i(TAG, "onPause: ");
     }
 
     /**
