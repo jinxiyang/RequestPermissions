@@ -52,7 +52,7 @@ public class MainFragment extends BaseFragment {
         btnCall.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                attempToCall("10086");
+                attemptToCall("10086");
             }
         });
         return view;
@@ -63,7 +63,7 @@ public class MainFragment extends BaseFragment {
     }
 
 
-    private void attempToCall(String phone) {
+    private void attemptToCall(String phone) {
         if (!isIntentExisting(getContext(), Intent.ACTION_DIAL)) {
             Toast.makeText(getContext(), "该设备不能打电话", Toast.LENGTH_SHORT).show();
             return;

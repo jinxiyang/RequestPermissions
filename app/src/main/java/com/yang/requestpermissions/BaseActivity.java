@@ -1,6 +1,5 @@
 package com.yang.requestpermissions;
 
-import android.app.Activity;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.support.annotation.NonNull;
@@ -8,18 +7,16 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 
-/**
- * Author: 杨进玺
- * Time: 2018/4/17  10:37
- */
-
 public class BaseActivity extends AppCompatActivity {
-
     /**
      * 请求权限
      */
-    public void requestDangerousPermissions(Activity ac, String[] permissions, int requestCode) {
-        ActivityCompat.requestPermissions(ac, permissions, requestCode);
+    public void requestDangerousPermissions(String[] permissions, int requestCode) {
+        if (checkDangerousPermissions(permissions)){
+            handlePermissionResult(requestCode, true);
+            return;
+        }
+        ActivityCompat.requestPermissions(this, permissions, requestCode);
     }
 
     /**
@@ -27,13 +24,13 @@ public class BaseActivity extends AppCompatActivity {
      * @param permissions
      * @return
      */
-    public boolean checkDangerousPermissions(Activity ac, String[] permissions) {
+    public boolean checkDangerousPermissions(String[] permissions) {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
             return true;
         }
         for (String permission : permissions) {
             if (ContextCompat.checkSelfPermission(this, permission) != PackageManager.PERMISSION_GRANTED ||
-                    ActivityCompat.shouldShowRequestPermissionRationale(ac, permission)) {
+                    ActivityCompat.shouldShowRequestPermissionRationale(this, permission)) {
                 return false;
             }
         }

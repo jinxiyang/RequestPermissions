@@ -7,16 +7,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 
-import java.util.ArrayList;
-import java.util.List;
-
-/**
- * Author: 杨进玺
- * Time: 2018/4/17  10:38
- */
-
 public class BaseFragment extends Fragment {
-
     /**
      * 请求权限
      *
@@ -24,22 +15,32 @@ public class BaseFragment extends Fragment {
      * @param requestCode
      */
     public void requestDangerousPermissions(String[] permissions, int requestCode) {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
+        if (checkDangerousPermissions(permissions)){
             handlePermissionResult(requestCode, true);
             return;
         }
-        List<String> needPermissions = new ArrayList<>();
+        requestPermissions(permissions, requestCode);
+    }
+
+    /**
+     * 检查是否已被授权危险权限
+     * @param permissions
+     * @return
+     */
+    public boolean checkDangerousPermissions(String[] permissions) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
+            return true;
+        }
+        if (getActivity() == null){
+            return false;
+        }
         for (String permission : permissions) {
-            if (ContextCompat.checkSelfPermission(getContext(), permission) != PackageManager.PERMISSION_GRANTED ||
+            if (ContextCompat.checkSelfPermission(getActivity(), permission) != PackageManager.PERMISSION_GRANTED ||
                     ActivityCompat.shouldShowRequestPermissionRationale(getActivity(), permission)) {
-                needPermissions.add(permission);
+                return false;
             }
         }
-        if (needPermissions.size() == 0) {
-            handlePermissionResult(requestCode, true);
-            return;
-        }
-        requestPermissions(needPermissions.toArray(new String[needPermissions.size()]), requestCode);
+        return true;
     }
 
     @Override
